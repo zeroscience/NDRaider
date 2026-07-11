@@ -1,0 +1,54 @@
+// Ground-truth corpus #3 for M2.2 - the types M2.1 deferred:
+// conformant-varying arrays/structs, complex (bogus) arrays, non-encapsulated
+// unions, and the plain conformant byte array (the MInterfacePointer.abData
+// shape that decoded to FC_ZERO on real binaries). Compile with MIDL; read the
+// byte layouts out of NdrComplex2_s.c.
+
+[
+    uuid(c3d4e5f6-3333-4444-5555-666677778888),
+    version(1.0),
+    pointer_default(unique)
+]
+interface NdrComplex2If
+{
+    // A struct containing a pointer -> makes any array of it a BOGUS array.
+    typedef struct _BogusEl {
+        long id;
+        [string] wchar_t* name;
+    } BogusEl;
+
+    // Non-encapsulated union (discriminant is a separate switch_is param).
+    typedef [switch_type(long)] union _NeU {
+        [case(1)] long   l;
+        [case(2)] double d;
+        [default] ;
+    } NeU;
+
+    // Conformant + varying array -> FC_CVARRAY.
+    void OpCVArr(
+        [in] handle_t h,
+        [in] long size,
+        [in] long len,
+        [in, size_is(size), length_is(len)] long arr[]);
+
+    // Struct ending in a conformant-varying array -> FC_CVSTRUCT.
+    typedef struct _CVStruct {
+        long total;
+        [size_is(total), length_is(total)] long data[];
+    } CVStruct;
+    void OpCVStruct([in] handle_t h, [in] CVStruct* cs);
+
+    // Plain conformant byte array inside a struct -> the MInterfacePointer
+    // shape. Reproduces the FC_ZERO element case for diagnosis.
+    typedef struct _Mip {
+        long cnt;
+        [size_is(cnt)] byte data[];
+    } Mip;
+    void OpMip([in] handle_t h, [in] Mip* p);
+
+    // Array of structs-with-pointers -> FC_BOGUS_ARRAY.
+    void OpBogusArr([in] handle_t h, [in] long n, [in, size_is(n)] BogusEl arr[]);
+
+    // Non-encapsulated union parameter -> FC_NON_ENCAPSULATED_UNION.
+    void OpNeUnion([in] handle_t h, [in] long sw, [in, switch_is(sw)] NeU* u);
+}

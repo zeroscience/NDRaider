@@ -1,0 +1,18 @@
+[package]
+name = "ndr-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Static extractor for RPC/DCOM NDR interface and format-string data from PE binaries"
+
+[lib]
+name = "ndr_core"
+# rlib: consumed by ndr-cli directly. cdylib: consumed by the Binary Ninja
+# plugin (and anything else) over a C ABI (see src/ffi.rs).
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+object = "0.36"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"

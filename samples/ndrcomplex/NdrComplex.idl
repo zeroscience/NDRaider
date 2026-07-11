@@ -1,0 +1,63 @@
+// Ground-truth corpus #2 for M2.1 - the complex NDR types that the first pass
+// left as `Unresolved`. Each typedef/method targets a specific FC_* the
+// interpreter must learn to walk. Compile with MIDL; the generated
+// NdrComplex_s.c is the oracle for the exact byte layouts.
+
+import "unknwn.idl";  // brings in IUnknown for the interface-pointer (FC_IP) case
+
+typedef [context_handle] void* CTX_HANDLE;
+
+[
+    uuid(b2c3d4e5-2222-3333-4444-555566667777),
+    version(1.0),
+    pointer_default(unique)
+]
+interface NdrComplexIf
+{
+    // Fixed inline array member -> FC_SMFARRAY (small fixed array).
+    typedef struct _FixedArr {
+        long header;
+        byte data[16];
+    } FixedArr;
+
+    // Last member is a conformant array -> FC_CSTRUCT (conformant struct).
+    typedef struct _ConfStruct {
+        long len;
+        [size_is(len)] long items[];
+    } ConfStruct;
+
+    // Contains a pointer member -> FC_BOGUS_STRUCT (complex struct).
+    typedef struct _BogusStruct {
+        long id;
+        [string] wchar_t* name;
+    } BogusStruct;
+
+    // Encapsulated union (discriminant travels with it) -> FC_ENCAPSULATED_UNION.
+    typedef union _EncU switch(long tag) u {
+        case 1: long   l;
+        case 2: double d;
+        default: ;
+    } EncU;
+
+    // 1. [range] on a scalar -> FC_RANGE
+    void OpRange([in] handle_t h, [in, range(0, 100)] long n);
+
+    // 2. fixed array struct -> FC_SMFARRAY (as struct member)
+    void OpFixed([in] handle_t h, [in] FixedArr* fa);
+
+    // 3. conformant struct -> FC_CSTRUCT
+    void OpConf([in] handle_t h, [in] ConfStruct* cs);
+
+    // 4. bogus/complex struct -> FC_BOGUS_STRUCT
+    void OpBogus([in] handle_t h, [in] BogusStruct* bs);
+
+    // 5. interface pointer -> FC_IP
+    void OpIface([in] handle_t h, [in] IUnknown* punk);
+
+    // 6. context handle -> FC_BIND_CONTEXT
+    void OpCtxOpen([in] handle_t h, [out] CTX_HANDLE* ctx);
+    void OpCtxUse([in] CTX_HANDLE ctx);
+
+    // 7. encapsulated union -> FC_ENCAPSULATED_UNION
+    void OpUnion([in] handle_t h, [in] EncU* u);
+}

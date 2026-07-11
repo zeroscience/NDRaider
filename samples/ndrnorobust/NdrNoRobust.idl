@@ -1,0 +1,25 @@
+// Ground-truth corpus #4 - same shapes as ndrcomplex2 but compiled /no_robust,
+// to capture the LEGACY 4-byte correlation descriptor layout (the cause of the
+// FC_ZERO mis-decode on some rpcss/spoolsv interfaces). Compare NdrNoRobust_s.c
+// against the robust ndrcomplex2 oracle to see the descriptor size difference.
+
+[
+    uuid(d4e5f6a7-4444-5555-6666-777788889999),
+    version(1.0),
+    pointer_default(unique)
+]
+interface NdrNoRobustIf
+{
+    // Conformant byte array inside a struct (the MInterfacePointer shape).
+    typedef struct _Mip {
+        long cnt;
+        [size_is(cnt)] byte data[];
+    } Mip;
+    void OpMip([in] handle_t h, [in] Mip* p);
+
+    // Conformant array param with size_is on another param.
+    void OpArr(
+        [in] handle_t h,
+        [in] long n,
+        [in, size_is(n)] long arr[]);
+}

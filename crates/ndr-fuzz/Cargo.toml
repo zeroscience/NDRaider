@@ -1,0 +1,33 @@
+[package]
+name = "ndr-fuzz"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "NDR request generator/mutator and (scaffolded) transport for structure-aware DCOM/RPC fuzzing"
+
+[[bin]]
+name = "ndr-fuzz"
+path = "src/main.rs"
+
+[dependencies]
+ndr-core = { path = "../ndr-core" }
+clap = { version = "4", features = ["derive"] }
+anyhow = "1"
+serde_json = "1"
+
+[target.'cfg(windows)'.dependencies]
+iced-x86 = { version = "1", default-features = false, features = ["std", "decoder", "instr_info"] }
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Security_Authentication_Identity",
+    "Win32_Security_Credentials",
+    "Win32_System_Threading",
+    "Win32_System_Diagnostics_Debug",
+    "Win32_System_Kernel",
+    "Win32_System_Memory",
+    "Win32_Storage_FileSystem",
+    "Win32_System_Registry",
+    "Win32_System_Com",
+    "Win32_System_Ole",
+    "Win32_System_Rpc",
+] }

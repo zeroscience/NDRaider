@@ -1,0 +1,57 @@
+// Ground-truth corpus for the NDR interpreter (M2).
+//
+// Each method deliberately exercises a different NDR feature so the generated
+// proc/type format strings cover the cases the interpreter must handle. After
+// compiling with MIDL, the generated NdrTest_c.c holds the format-string byte
+// arrays (with MIDL's own comments) - that file is our oracle.
+//
+// Explicit `handle_t` first parameter on every method keeps this a single
+// self-contained .idl (no ACF / implicit-handle needed).
+
+[
+    uuid(a1b2c3d4-1111-2222-3333-444455556666),
+    version(1.0),
+    pointer_default(unique)
+]
+interface NdrTestIf
+{
+    // A simple fixed struct (FC_STRUCT) used by-pointer below.
+    typedef struct _Point {
+        long x;
+        long y;
+    } Point;
+
+    // 1. Scalar base types: FC_LONG, FC_SHORT, FC_SMALL, FC_DOUBLE, FC_BYTE.
+    long AddNumbers(
+        [in] handle_t h,
+        [in] long   a,
+        [in] short  b,
+        [in] small  c,
+        [in] double d,
+        [in] byte   e);
+
+    // 2. Pointer to a simple struct: FC_UP -> FC_STRUCT.
+    void SendPoint([in] handle_t h, [in] Point* p);
+
+    // 3. Conformant array with size_is: FC_CARRAY + correlation descriptor.
+    long SumArray(
+        [in] handle_t h,
+        [in] long count,
+        [in, size_is(count)] long data[]);
+
+    // 4. Conformant wide string: FC_C_WSTRING.
+    void Echo([in] handle_t h, [in, string] wchar_t* msg);
+
+    // 5. Output scalar by reference: FC_RP -> FC_LONG.
+    void GetValue([in] handle_t h, [out] long* value);
+
+    // 6. DELIBERATELY VULNERABLE (test target only): copies a size_is buffer
+    //    into a fixed 64-byte stack buffer with no bounds check - the textbook
+    //    RPC stack-buffer-overflow. Used to prove the coverage fuzzer catches
+    //    crashes: len > 64 smashes the /GS stack cookie -> STATUS_STACK_BUFFER_
+    //    OVERRUN, which our debugger records with a reproducer.
+    void VulnCopy(
+        [in] handle_t h,
+        [in] long len,
+        [in, size_is(len)] byte data[]);
+}

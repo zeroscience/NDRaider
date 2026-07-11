@@ -1,0 +1,23 @@
+// Ground-truth corpus #5 - FC_USER_MARSHAL (a [wire_marshal] type, here BSTR)
+// and fixed varying arrays (FC_SMVARRAY). These are the remaining method-param
+// types the interpreter leaves Unresolved. Compile with MIDL; read the layout
+// out of NdrMarshal_s.c.
+
+import "oaidl.idl";   // provides BSTR (a [wire_marshal] user-marshalled type)
+
+[
+    uuid(e5f6a7b8-5555-6666-7777-888899990000),
+    version(1.0),
+    pointer_default(unique)
+]
+interface NdrMarshalIf
+{
+    // FC_USER_MARSHAL: BSTR is a user-marshalled wire type.
+    void OpBstr([in] handle_t h, [in] BSTR s);
+
+    // FC_SMVARRAY: a fixed array with [length_is] (fixed size, varying length).
+    void OpVarArr(
+        [in] handle_t h,
+        [in] long len,
+        [in, length_is(len)] long arr[32]);
+}

@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+members = ["crates/ndr-core", "crates/ndr-cli", "crates/ndr-fuzz", "crates/ndr-gui"]
+
+[workspace.package]
+version = "0.25.1"
+edition = "2021"
+rust-version = "1.74"
+license = "MIT OR Apache-2.0"
+description = "NDRaider (Sani): static NDR grammar extraction and structure-aware, coverage-guided Windows RPC/DCOM fuzzing."
+authors = ["Silly Security Inc. <https://sillysec.com>", "Zero Science Lab <https://zeroscience.mk>"]
+homepage = "https://sillysec.com"
+repository = "https://github.com/zeroscience/NDRaider"
+keywords = ["rpc", "dcom", "fuzzing", "ndr", "windows"]
+categories = ["command-line-utilities", "development-tools::testing"]

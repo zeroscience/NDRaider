@@ -1,0 +1,16 @@
+[package]
+name = "ndr-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Command-line front-end for ndr-core"
+
+[[bin]]
+name = "ndr-cli"
+path = "src/main.rs"
+
+[dependencies]
+ndr-core = { path = "../ndr-core" }
+clap = { version = "4", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"

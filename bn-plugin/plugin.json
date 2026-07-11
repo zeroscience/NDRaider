@@ -1,0 +1,22 @@
+{
+  "pluginmetadataversion": 2,
+  "name": "IPC-DCOM-Fuzzer NDR Extractor",
+  "type": ["core"],
+  "api": ["python3"],
+  "description": "Extract RPC/DCOM interfaces and NDR-decoded method signatures, then rename and comment server handler functions.",
+  "longdescription": "Calls the ndr-core cdylib to statically decode Microsoft RPC/DCOM interfaces (interface UUIDs, per-method NDR parameter signatures) directly from the loaded PE, then annotates the BinaryView: names each RPC_SERVER_INTERFACE structure and renames/comments the server-side handler functions recovered from the dispatch table.\n\nRequires the ndr-core dynamic library (ndr_core.dll / libndr_core.so / libndr_core.dylib). Build it with `cargo build -p ndr-core --release` and either leave it under `target/release`, set the `NDR_CORE_LIB` environment variable to its path, or copy it next to this plugin.",
+  "license": {
+    "name": "MIT",
+    "text": "Dual-licensed MIT OR Apache-2.0; see repository LICENSE files."
+  },
+  "platforms": ["Windows", "Linux", "Darwin"],
+  "installinstructions": {
+    "Windows": "Build ndr-core (`cargo build -p ndr-core --release`) and ensure ndr_core.dll is discoverable (target/release, NDR_CORE_LIB, or beside this plugin).",
+    "Linux": "Build ndr-core (`cargo build -p ndr-core --release`) and ensure libndr_core.so is discoverable (target/release, NDR_CORE_LIB, or beside this plugin).",
+    "Darwin": "Build ndr-core (`cargo build -p ndr-core --release`) and ensure libndr_core.dylib is discoverable (target/release, NDR_CORE_LIB, or beside this plugin)."
+  },
+  "dependencies": {},
+  "version": "0.1.0",
+  "author": "LiquidWorm",
+  "minimumbinaryninjaversion": 4000
+}
