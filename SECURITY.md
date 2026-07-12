@@ -25,7 +25,7 @@ Preferred channels:
 
 1. **GitHub private vulnerability reporting** - open a draft advisory via the
    repository's *Security → Report a vulnerability* tab.
-2. Or email the maintainer at **`<SECURITY_CONTACT_EMAIL>`**. <!-- fill this in -->
+2. Or email the maintainer at **`lab@zeroscience.mk`**.
 
 Please include:
 
